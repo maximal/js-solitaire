@@ -1,6 +1,8 @@
 import spriteImg from './sprite.png';
 import { i18n, _t_ } from './translate';
 
+const drawCards = 3;
+
 const gameEl = document.getElementById('js-solitaire');
 const dealPileEl = document.getElementById('js-deck-pile');
 const dealEl = document.getElementById('js-deck-deal');
@@ -313,7 +315,7 @@ const handleClick = index => event => {
 		const { location, pile } = getCardLocation(index);
 		if (location === 'deal' && pile === 'pile') {
 			const max = state.deal.pile.cards.length - 1;
-			const min = Math.max(-1, max - 3);
+			const min = Math.max(-1, max - drawCards);
 
 			for (let i = max; i > min; i--) {
 				const card = state.deal.pile.cards[i];
