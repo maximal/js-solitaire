@@ -1,4 +1,5 @@
 import spriteImg from './sprite.png';
+import { i18n, _t_ } from './translate';
 
 const gameEl = document.getElementById('js-solitaire');
 const dealPileEl = document.getElementById('js-deck-pile');
@@ -7,6 +8,7 @@ const finishContainerEl = document.getElementById('js-finish');
 const deskContainerEl = document.getElementById('js-board');
 const deckPileEl = document.getElementById('js-deck-pile');
 const resetEl = document.getElementById('js-reset');
+const titleEl = document.getElementById('js-title');
 
 const cardWidth = 71;
 const cardHeight = 96;
@@ -684,6 +686,13 @@ function initSolitaire() {
 	const styles = `.card--front { background-image: url("${spriteImg}"); }`;
 	css.appendChild(document.createTextNode(styles));
 	document.head.appendChild(css);
+	document.body.classList.remove('no-js');
+
+	i18n('en');
+
+	document.title = _t_('Solitaire');
+	titleEl.textContent = _t_('Solitaire');
+	resetEl.textContent = _t_('New Game');
 
 	// create all cards
 	for (let i = 0; i < 4; i++) {
