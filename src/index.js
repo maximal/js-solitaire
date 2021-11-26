@@ -2,7 +2,9 @@ import spriteImg from './sprite.png';
 import { i18n, _t_ } from './translate';
 
 const drawCards = 3;
+const isPreWin = false;
 
+const document = window.document;
 const gameEl = document.getElementById('js-solitaire');
 const dealPileEl = document.getElementById('js-deck-pile');
 const dealEl = document.getElementById('js-deck-deal');
@@ -19,6 +21,7 @@ const state = {
 	types: ['c', 'd', 'h', 's'],
 	// 0 (black), 1 (red)
 	colors: { 'c': 0, 'd': 1, 'h': 1, 's': 0 },
+	typeOrder: { 'c': 0, 'd': 1, 'h': 2, 's': 3 },
 	cards: [
 		// { el: null, type: 's', number: 0, facingUp: false }, {...}
 	],
@@ -61,6 +64,7 @@ const state = {
 		destinations: [],
 	},
 };
+
 
 const getCard = index => state.cards[index];
 
@@ -231,6 +235,30 @@ function dealCards() {
 	}
 }
 
+function dealCardsPreWin() {
+	for (let i = 0, l = state.cards.length; i < l; i++) {
+		faceUp(i);
+	}
+}
+
+function compareCards(a, b) {
+	if (a.number < b.number) {
+		return +1;
+	}
+	if (a.number > b.number) {
+		return -1;
+	}
+
+	if (state.typeOrder[a.type] < state.typeOrder[b.type]) {
+		return +1;
+	}
+	if (state.typeOrder[a.type] > state.typeOrder[b.type]) {
+		return -1;
+	}
+
+	return 0;
+}
+
 function resetGame() {
 	// clear decks
 	for (let i = 0; i < 7; i++) {
@@ -243,7 +271,11 @@ function resetGame() {
 	state.deal.deal.cards = [];
 
 	// randomise cards
-	state.cards.sort(() => (Math.random() < .5) ? -1 : 1);
+	if (isPreWin) {
+		state.cards.sort(compareCards);
+	} else {
+		state.cards.sort(() => (Math.random() < .5) ? -1 : 1);
+	}
 
 	// re-assign indexes
 	requestAnimationFrame(() => {
@@ -260,7 +292,12 @@ function resetGame() {
 			}
 			dealPileEl.appendChild(el);
 		}
-		dealCards();
+
+		if (isPreWin) {
+			dealCardsPreWin();
+		} else {
+			dealCards();
+		}
 	});
 }
 
@@ -679,7 +716,9 @@ const win = (canvasWidth, canvasHeight, canvasLeft, canvasTop) => {
 		document.removeEventListener('click', removeAnimation);
 	}
 
-	document.addEventListener('click', removeAnimation, false);
+	setTimeout(() => {
+		document.addEventListener('click', removeAnimation, false);
+	}, 5000);
 };
 
 function initSolitaire() {
